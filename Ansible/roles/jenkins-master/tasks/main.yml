@@ -1,0 +1,143 @@
+---
+# Update system packages
+- name: Update apt cache
+  apt:
+    update_cache: yes # does sudo apt get-update
+    cache_valid_time: 3600 # in seconds
+
+# Install Docker
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present # Means dont install if already present
+
+- name: Add ubuntu to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
+
+# Restart Docker Service
+- name: Restart Docker service
+  systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+
+# Refresh Ansible SSH session so ubuntu gets docker group permissions
+- name: Refresh connection after group change
+  meta: reset_connection
+
+# Install Java 17 for Jenkins
+- name: Install Java Runtime and fontconfig
+  apt:
+    name:
+      - openjdk-17-jre
+      - fontconfig
+    state: present
+
+# Add Jenkins repository key
+- name: Add Jenkins GPG key
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: '0644'
+
+# Add Jenkins repository
+- name: Add Jenkins repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+    filename: jenkins
+  
+# Install Jenkins
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: present
+    update_cache: yes # To get latest repo updates
+
+# Start and enable Jenkins service
+- name: Start and enable Jenkins service
+  systemd:
+    name: jenkins
+    state: started
+    enabled: yes
+
+# Install AWS CLI
+- name: Download AWS CLI # Zip file
+  get_url:
+    url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp/awscliv2.zip
+
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present # Means dont install if already present
+
+- name: Extract AWS CLI
+  unarchive:
+    src: /tmp/awscliv2.zip
+    dest: /tmp
+    remote_src: yes # tells Ansible that the src path is on the remote host, not on your control machine (where you run ansible-playbook)
+
+- name: AWS CLI Install
+  command: /tmp/aws/install
+  args:
+    creates: /usr/local/bin/aws
+
+# Install kubectl
+- name: Download kubectl
+  get_url:
+    url: https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+    dest: /tmp/kubectl
+    mode: '0755'
+
+- name: Install kubectl
+  copy:
+    src: /tmp/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: '0755' # Make it executable
+    remote_src: yes
+
+# Install eksctl
+- name: Download and install eksctl
+  unarchive:
+    src: https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: '0755'
+    creates: /usr/local/bin/eksctl
+
+# Install SonarQube container
+- name: Run SonarQube container
+  docker_container:
+    name: sonarqube-server
+    image: sonarqube:lts-community
+    state: started
+    restart_policy: always
+    ports:
+      - "9000:9000"
+
+# Generate SSH keys for Jenkins master-slave configuration
+- name: Ensure .ssh directory exists
+  file:
+    path: /home/ubuntu/.ssh
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0700'
+
+- name: Generate SSH key pair for jenkins-master
+  openssh_keypair:
+    path: /home/ubuntu/.ssh/id_rsa
+    owner: ubuntu
+    group: ubuntu
+    mode: '0600'
+
+- name: Set public key permissions
+  file:
+    path: /home/ubuntu/.ssh/id_rsa.pub
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'

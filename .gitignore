@@ -1,0 +1,16 @@
+
+# SSH keys
+*.pem
+*.pub
+*.key
+
+# Terraform state and backup files
+*.tfstate
+*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+
+# Sensitive files
+*.env
+*.secret

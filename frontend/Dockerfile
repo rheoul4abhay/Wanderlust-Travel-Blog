@@ -1,26 +1,31 @@
-# ------------------- Stage 1: Build Stage ------------------------------
+# Stage 1: Build Stage
 FROM node:21 AS frontend-builder
 
-# Set the working directory to /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json for dependency installation
+# Copy package files first for better caching
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
+# Copy source code and build
 COPY . .
+RUN npm run build
 
-# ------------------- Stage 2: Final Stage ------------------------------
+# Stage 2: Production Stage
 FROM node:21-slim
 
-# Set the working directory to /app
 WORKDIR /app
 
-# Copy built assets and dependencies from frontend-builder stage
-COPY --from=frontend-builder /app .
+# Copy package files and install production dependencies
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy built application files
+COPY --from=frontend-builder /app/dist ./dist
+COPY --from=frontend-builder /app/src ./src
+COPY --from=frontend-builder /app/public ./public
+COPY --from=frontend-builder /app/index.html ./
+COPY --from=frontend-builder /app/vite.config.ts ./
 
 # Copy the .env.sample file to .env.local
 COPY .env.docker .env.local
