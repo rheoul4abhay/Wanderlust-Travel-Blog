@@ -1,5 +1,7 @@
-# Terraform local state and caches
-.terraform/
+# Terraform local state and caches (ignore in all directories)
+**/.terraform/
+
+# Terraform state
 *.tfstate
 *.tfstate.backup
 
@@ -7,8 +9,8 @@
 *.tfvars
 *.tfvars.json
 
-# Terraform lockfile
-terraform.lock.hcl
+# Terraform lockfile (usually KEEP this tracked for reproducible builds)
+# terraform.lock.hcl
 
 # Crash logs
 crash.log
