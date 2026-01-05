@@ -1,16 +1,18 @@
-
-# SSH keys
-*.pem
-*.pub
-*.key
-
-# Terraform state and backup files
+# Terraform local state and caches
+.terraform/
 *.tfstate
 *.tfstate.backup
 
-# Terraform crash logs
+# Terraform variables
+*.tfvars
+*.tfvars.json
+
+# Terraform lockfile
+terraform.lock.hcl
+
+# Crash logs
 crash.log
 
-# Sensitive files
+# Environment/secrets
 *.env
 *.secret
