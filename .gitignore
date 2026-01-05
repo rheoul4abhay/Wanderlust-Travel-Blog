@@ -9,8 +9,8 @@
 *.tfvars
 *.tfvars.json
 
-# Terraform lockfile (usually KEEP this tracked for reproducible builds)
-# terraform.lock.hcl
+# Terraform lockfile (usually keep it tracked)
+terraform.lock.hcl
 
 # Crash logs
 crash.log
