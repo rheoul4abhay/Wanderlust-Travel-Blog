@@ -6,7 +6,7 @@ echo "Starting Infrastructure Setup..."
 
 # Step 1: Apply Terraform
 echo "📦 Applying Terraform configuration..."
-cd terraform/
+cd Terraform/
 terraform init
 terraform plan
 terraform apply -auto-approve
@@ -47,7 +47,7 @@ sleep 30 # Wait for EC2 Instance to be ready
 
 # Step 5: Run Ansible Playbook
 echo "🎭 Running Ansible playbook..."
-cd ansible/
+cd Ansible/
 ansible-playbook -i inventory playbook.yml
 cd ..
 

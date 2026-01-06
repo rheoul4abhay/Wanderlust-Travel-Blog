@@ -18,3 +18,5 @@ crash.log
 # Environment/secrets
 *.env
 *.secret
+
+.vscode
