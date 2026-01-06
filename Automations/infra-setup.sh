@@ -6,7 +6,7 @@ echo "Starting Infrastructure Setup..."
 
 # Step 1: Apply Terraform
 echo "📦 Applying Terraform configuration..."
-cd Terraform/
+cd ../Terraform
 terraform init
 terraform plan
 terraform apply -auto-approve
