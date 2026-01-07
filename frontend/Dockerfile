@@ -16,9 +16,9 @@ FROM node:21-slim
 
 WORKDIR /app
 
-# Copy package files and install production dependencies
+# Copy package files and install all dependencies (including Vite)
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm install
 
 # Copy built application files
 COPY --from=frontend-builder /app/dist ./dist
