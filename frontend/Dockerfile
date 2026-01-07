@@ -7,7 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy source code and build
+# Copy environment file and source code
+COPY .env.docker .env
 COPY . .
 RUN npm run build
 
