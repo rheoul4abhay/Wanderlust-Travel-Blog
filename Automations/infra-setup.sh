@@ -36,7 +36,7 @@ fi
 
 # Step 3: Update Ansible inventory
 echo "📝 Updating Ansible inventory..."
-cat <<EOF > ansible/inventory
+cat <<EOF > Ansible/inventory
 [jenkins_masters]
 wanderlust-master ansible_host=${INSTANCE_IP} ansible_user=ubuntu ansible_ssh_private_key_file=${HOME}/.ssh/gitops
 EOF
