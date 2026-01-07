@@ -1,2 +1,2 @@
 [jenkins_masters]
-wanderlust-master ansible_host=3.81.100.80 ansible_user=ubuntu ansible_ssh_private_key_file=/home/abhay/.ssh/gitops
+wanderlust-master ansible_host=98.93.135.61 ansible_user=ubuntu ansible_ssh_private_key_file=/home/abhay/.ssh/gitops

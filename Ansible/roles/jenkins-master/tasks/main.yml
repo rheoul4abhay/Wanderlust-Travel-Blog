@@ -119,25 +119,33 @@
     ports:
       - "9000:9000"
 
-# Generate SSH keys for Jenkins master-slave configuration
+# Generate SSH keys for Jenkins user for master-slave configuration
 - name: Ensure .ssh directory exists
   file:
-    path: /home/ubuntu/.ssh
+    path: /var/lib/jenkins/.ssh
     state: directory
-    owner: ubuntu
-    group: ubuntu
+    owner: jenkins
+    group: jenkins
     mode: '0700'
 
 - name: Generate SSH key pair for jenkins-master
-  openssh_keypair:
-    path: /home/ubuntu/.ssh/id_rsa
-    owner: ubuntu
-    group: ubuntu
+  become_user: jenkins
+  command: >
+      ssh-keygen -t rsa -b 4096 -f /var/lib/jenkins/.ssh/id_rsa -N "
+  args:
+    creates: /var/lib/jenkins/.ssh/id_rsa   # idempotent
+
+# Ensure private key permissions
+- name: Private key permissions
+  file:
+    path: /var/lib/jenkins/.ssh/id_rsa
+    owner: jenkins
+    group: jenkins
     mode: '0600'
 
-- name: Set public key permissions
+# Ensure public key permissions
+- name: Public key permissions
   file:
-    path: /home/ubuntu/.ssh/id_rsa.pub
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+    path: /var/lib/jenkins/.ssh/id_rsa.pub
+    owner: jenkins
+    group: jenkins
