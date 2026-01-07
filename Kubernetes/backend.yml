@@ -44,7 +44,7 @@ metadata:
   name: backend-service
   namespace: wanderlust
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: backend
   ports:
