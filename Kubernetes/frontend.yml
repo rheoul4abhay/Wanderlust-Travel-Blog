@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: abhayshrivastava/wanderlust-frontend-beta:v1.1.6
+          image: abhayshrivastava/wanderlust-frontend-beta:v1.1.7
           ports:
-            - containerPort: 5173
+            - containerPort: 80
           resources:
             requests:
               cpu: 200m
@@ -31,7 +31,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 5173
+              port: 80
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
@@ -39,7 +39,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 5173
+              port: 80
             initialDelaySeconds: 45
             periodSeconds: 15
             timeoutSeconds: 5
@@ -58,6 +58,6 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 5173
-      targetPort: 5173
+      port: 80
+      targetPort: 80
       nodePort: 31000
