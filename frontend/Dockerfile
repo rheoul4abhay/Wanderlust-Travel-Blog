@@ -12,17 +12,27 @@ COPY .env.docker .env
 COPY . .
 RUN npm run build
 
-# Stage 2: Production Stage with Nginx
-FROM nginx:alpine
+# Stage 2: Production Stage
+FROM node:21-slim
 
-# Copy built application files to nginx html directory
-COPY --from=frontend-builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy package files and install all dependencies (including Vite)
+COPY package*.json ./
+RUN npm install
 
-# Expose port 80
-EXPOSE 80
+# Copy built application files
+COPY --from=frontend-builder /app/dist ./dist
+COPY --from=frontend-builder /app/src ./src
+COPY --from=frontend-builder /app/public ./public
+COPY --from=frontend-builder /app/index.html ./
+COPY --from=frontend-builder /app/vite.config.ts ./
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Copy environment file
+COPY .env.docker .env.local
+
+# Expose port 5173
+EXPOSE 5173
+
+# Start Vite preview server
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]
