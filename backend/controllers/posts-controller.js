@@ -1,44 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Seed database with sample data
-export const seedDatabaseHandler = async (req, res) => {
-  try {
-    // Check if posts already exist
-    const existingPosts = await Post.find();
-    if (existingPosts.length > 0) {
-      return res.status(HTTP_STATUS.OK).json({ message: 'Database already has posts' });
-    }
-
-    // Read sample data
-    const sampleDataPath = path.join(__dirname, '../data/sample_posts.json');
-    const sampleData = JSON.parse(fs.readFileSync(sampleDataPath, 'utf8'));
-    
-    // Transform sample data to match schema
-    const postsToInsert = sampleData.map(post => ({
-      title: post.title,
-      authorName: post.authorName,
-      imageLink: post.imageLink,
-      categories: post.categories,
-      description: post.description,
-      isFeaturedPost: post.isFeaturedPost,
-      timeOfPost: new Date(post.timeOfPost.$date)
-    }));
-
-    // Insert sample posts
-    await Post.insertMany(postsToInsert);
-    
-    res.status(HTTP_STATUS.OK).json({ 
-      message: `Successfully seeded database with ${postsToInsert.length} posts` 
-    });
-  } catch (err) {
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
-  }
-};
+import Post from '../models/post.js';
 import {
   deleteDataFromCache,
   retrieveDataFromCache,

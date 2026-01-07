@@ -17,9 +17,6 @@ const router = Router();
 // Create a new post
 router.post('/', createPostHandler);
 
-// Seed database with sample data
-router.post('/seed', seedDatabaseHandler);
-
 // Get all posts
 router.get('/', cacheHandler(REDIS_KEYS.ALL_POSTS), getAllPostsHandler);
 
