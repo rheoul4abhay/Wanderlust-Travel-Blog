@@ -23,23 +23,27 @@ spec:
             - containerPort: 5173
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
           livenessProbe:
             httpGet:
               path: /
               port: 5173
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /
               port: 5173
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
 
 # Frontend Service
 ---
